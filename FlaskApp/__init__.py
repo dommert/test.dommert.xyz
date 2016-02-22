@@ -7,7 +7,7 @@ api_url = "/v1"
 
 @app.route("/")
 def hello():
-    return "Hello World! Flask-Rambo"
+    return "Dev.Dommert.XYZ"
 
 @app.route("/about")
 def about():
@@ -50,7 +50,7 @@ def catch_all(path):
     return 'You want path: %s' % path
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',debug=True)
+    app.run(host='0.0.0.0',debug=True, port=80)
 
 
 
