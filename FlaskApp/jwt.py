@@ -10,8 +10,6 @@ from config import SECRET_KEY
 
 
 
-users = Blueprint('users', __name__)
-
 def create_token(user):
     payload = {
         # subject
@@ -30,7 +28,7 @@ def parse_token(req):
     return jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
 
 
-def login_required(f):
+def token(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not request.headers.get('Authorization'):
