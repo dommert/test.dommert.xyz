@@ -1,8 +1,7 @@
 from flask import Flask, render_template
-from flask_peewee.db import Database
+from flask_chairy.db import Database
 from peewee import *
-from flask.ext.security import Security, PeeweeUserDatastore, \
-    UserMixin, RoleMixin, login_required
+from flask.ext.security import Security, PeeweeUserDatastore, UserMixin, RoleMixin, login_required
 
 # Create app
 app = Flask(__name__)
