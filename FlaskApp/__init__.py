@@ -1,5 +1,5 @@
 # API.Dommert.xyz
-from flask import Flask, jsonify, request
+from flask import Flask
 from app import app
 from views import *
 #from models import *
