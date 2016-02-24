@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-
+from models import User
 
 '''
 Flask-Token
@@ -27,18 +27,6 @@ Build just a angular frontend
  # Destroy token
 
 
-# User Model
- # id
- # username
- # email
- # password
- # created
- # lastlogin
- # active
- # admin
- # (uid)
-
-#
 
 def create_token(user, expires = 24):
     payload = {
@@ -81,8 +69,20 @@ def token(f):
     return decorated_function
 
 
-## Views
-@app.route('/signup', methods=['POST'])
+## Views ---------------------------
+
+
+@app.route('/dummy-api/', methods=['GET'])
+@auth_token_required
+def dummyAPI():
+    ret_dict = {
+        "Key1": "Value1",
+        "Key2": "value2"
+    }
+    return jsonify(items=ret_dict)
+
+
+@app.route('/api/signup', methods=['POST'])
 def register():
     # Get JSON data
     json_data = request.json
@@ -98,7 +98,7 @@ def register():
     return jsonify({'result': status})
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     json_data = request.json
     #find the user in db

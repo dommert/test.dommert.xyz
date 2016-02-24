@@ -1,10 +1,10 @@
-from flask_chairy.db import Database
-from flask_chairy.util import make_password, check_password
 # Models.py
-
 import datetime
 from app import db
 from peewee import *
+from flask_chairy.util import make_password, check_password
+
+
 # -----------------------------------------------------
 
 class BaseUser(object):
