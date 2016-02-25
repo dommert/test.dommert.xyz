@@ -1,8 +1,8 @@
 # Auth
 
 from flask import Flask, request, redirect
-from flask import render_template, flash,
-from app import app
+from flask import render_template, flash
+from app import app, db
 from model import *
 from config import Configuration
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -105,13 +105,13 @@ def login():
     json_data = request.json
     # Find Email
     user = User.query.filter_by(email=json_data['email']).first()
-    if user and bcrypt.check_password_hash(
-            user.password, json_data['password']):
-        session['logged_in'] = True
-        status = True
+    if user and check_password_hash(user.password, json_data['password']):
+        jtoken = create_token(user)
+        return {'token': jtoken }
+
     else:
         status = False
-    return jsonify({'result': status})
+    return jsonify({'result': status, "message": "Invalid username/password"})
 
 
 
