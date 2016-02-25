@@ -1,7 +1,15 @@
 # Auth
 
-from flask import Flask
+from flask import Flask, request, redirect
+from flask import render_template, flash,
 from app import app
+from model import *
+from config import Configuration
+from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
+import jwt
+from jwt import DecodeError, ExpiredSignature
+
 
 
 
@@ -21,14 +29,14 @@ from app import app
 
 
 # Create Token
-def create_token(user):
+def create_token(user, expires = 20):
     payload = {
         # subject
         'sub': user.id,
         #issued at
         'iat': datetime.utcnow(),
         #expiry
-        'exp': datetime.utcnow() + timedelta(days=1)
+        'exp': datetime.utcnow() + timedelta(hours=expires)
     }
 
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
@@ -84,6 +92,7 @@ def register():
         # Add User
         db.session.add(user)
         db.session.commit()
+        #password = generate_password_hash(user.password)
         status = 'success'
     except:
         status = 'this user is already registered'
