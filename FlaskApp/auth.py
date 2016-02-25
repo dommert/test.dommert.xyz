@@ -12,22 +12,6 @@ from jwt import DecodeError, ExpiredSignature
 
 
 
-
-# Create Users
-
-
-# Login
-
-
-# LogOut
-
-
-# Hash_Pass
-
-
-# Verify_Hash
-
-
 # Create Token
 def create_token(user, expires = 20):
     payload = {
@@ -43,14 +27,12 @@ def create_token(user, expires = 20):
     return token.decode('unicode_escape')
 
 
-
 # Parse Token
 def parse_token(req):
     token = req.headers.get('Authorization').split()[1]
     return jwt.decode(token, SECRET_KEY, algorithms='HS256')
 
-# @Token
-
+# @Token Wrapper
 def token(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -75,6 +57,18 @@ def token(f):
 
     return decorated_function
 
+# Authenicate User
+def authenticate(self, username, password):
+        active = self.User.select().where(self.User.active==True)
+        try:
+            user = active.where(self.User.email==username).get()
+        except self.User.DoesNotExist:
+            return False
+        else:
+            if not user.check_password(password):
+                return False
+
+        return user
 
 
 # ------ ROUTES -------- #
@@ -105,9 +99,9 @@ def login():
     json_data = request.json
     # Find Email
     user = User.query.filter_by(email=json_data['email']).first()
-    if user and check_password_hash(user.password, json_data['password']):
+    if authenticate(self, json_data['username'], json_data['password']):
         jtoken = create_token(user)
-        return {'token': jtoken }
+        return {'token': jtoken}
 
     else:
         status = False

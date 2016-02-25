@@ -8,5 +8,5 @@ app = Flask(__name__)
 app.config.from_object('config.Configuration')
 
 db = Database(app)
-#def create_tables():
-#    User.create_table()
+def create_tables():
+    User.create_table()
