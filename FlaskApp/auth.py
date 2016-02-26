@@ -78,15 +78,14 @@ def register():
     json_data = request.json
     username = json_data['username']
     password = json_data['password']
-    hashed_pass = make_password(password)
     try:
-        user = User(username=username, email=false, admin=False, active=True, join_date=datetime.datetime.now())
+        user = User(username=username, email=False, admin=False, active=True, join_date=datetime.datetime.now())
         user.set_password(password)
         user.save()
-        status = true
+        status = True
         msg = 'Success ' + username
     except:
-        status = false
+        status = False
         msg = 'This user is already registered!'
     return jsonify(status=status, message=msg)
 
