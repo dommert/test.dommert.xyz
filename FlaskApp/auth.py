@@ -83,12 +83,12 @@ def register():
         user = User(username=False, email=username, admin=False, active=True, join_date=datetime.datetime.now())
         user.set_password(password)
         user.save()
-        status = 'Success ' + username
-
+        status = true
+        msg = 'Success ' + username
     except:
-        status = 'This user is already registered!'
-        status2 = username + password
-    return jsonify({'message': status, 'user': status2})
+        status = false
+        msg = 'This user is already registered!'
+    return jsonify(status=status, message=msg)
 
 # LOGIN
 @app.route('/api/login', methods=['POST'])
@@ -101,10 +101,10 @@ def login():
     if authenticate(username, password):
         jtoken = create_token(user)
         status = True
-        return jtoken
+        return jsonify(status= status, access_token= jtoken)
     else:
         status = False
-        return jsonify({status: status})
+        return jsonify(status= status, message="Login Error!")
 
 
 
