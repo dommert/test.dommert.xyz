@@ -24,14 +24,14 @@ def create_token(user, expires=20):
         'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=expires)
     }
 
-    token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
+    token = jwt.encode(payload, app.config['TOKEN_KEY'], algorithm='HS256')
     return token.decode('unicode_escape')
 
 
 # Parse Token
 def parse_token(req):
     token = req.headers.get('Authorization').split()[1]
-    return jwt.decode(token, app.config['SECRET_KEY'], algorithms='HS256')
+    return jwt.decode(token, app.config['TOKEN_KEY'], algorithms='HS256')
 
 # @Token Wrapper
 def token(f):
@@ -44,11 +44,11 @@ def token(f):
         try:
             payload = parse_token(request)
         except DecodeError:
-            response = jsonify(message='Token is invalid')
+            response = jsonify(message='Token is invalid =)')
             response.status_code = 401
             return response
         except ExpiredSignature:
-            response = jsonify(message='Token has expired')
+            response = jsonify(message='Token has expired! :(')
             response.status_code = 401
             return response
 
