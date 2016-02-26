@@ -14,7 +14,7 @@ from jwt import DecodeError, ExpiredSignature
 
 
 # Create Token
-def create_token(user, expires = 20):
+def create_token(user, expires=20):
     payload = {
         # subject
         'sub': user.id,
@@ -96,16 +96,15 @@ def login():
     json_data = request.json
     username = json_data['username']
     password = json_data['password']
-    status = []
       # Find Email
     user = User.select().where(User.email==username).get()
     if authenticate(username, password):
         jtoken = create_token(user)
-        status.status = True
-        status.token = jtoken
+        status = True
+        return jtoken
     else:
-        status.status = False
-    return jsonify({'result': status.status, 'token': status.token})
+        status = False
+        return jsonify({status: status})
 
 
 
