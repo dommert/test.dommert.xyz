@@ -17,9 +17,9 @@ class BaseUser(object):
 
 # User Class
 class User(db.Model, BaseUser):
-    username = CharField(unique=True, null=True)
-    password = CharField()
-    email = CharField(unique=True)
+    username = CharField(unique=True, null = False)
+    password = CharField(null=False)
+    email = CharField(unique=True, null=True)
     join_date = DateTimeField(default=datetime.datetime.now)
     active = BooleanField(default=True)
     admin = BooleanField(default=False)

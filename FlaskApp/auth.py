@@ -63,7 +63,7 @@ def authenticate(username, password):
         try:
 
             hashpassword = User.password
-            user = User.where((User.active == True) & (User.email == username) & (User.password == hashpassword)).get()
+            user = User.select().where((User.email == username) & (User.active == 1) & (User.password == hashpassword)).get()
         except User.DoesNotExist:
             return False
         return user
@@ -83,7 +83,7 @@ def register():
         user.set_password(password)
         user.save()
         status = True
-        msg = 'Success ' + username
+        msg = 'Success!'
     except:
         status = False
         msg = 'This user is already registered!'
