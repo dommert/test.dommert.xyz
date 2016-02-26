@@ -21,7 +21,7 @@ class Configuration(object):
 
 # PeeWee Database
     DATABASE = {
-        'name': 'flask_netbook.db',
+        'name': 'auth.db',
         'engine': 'peewee.SqliteDatabase',
         'check_same_thread': False,
     }

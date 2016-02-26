@@ -1,12 +1,13 @@
 # API.Dommert.xyz
-from flask import Flask
 from app import app
-from views import *
-#from models import *
+from views import Routes
+from models import *
+from auth import *
 
 
 
 if __name__ == "__main__":
+    User.create_table(fail_silently=True)
     app.run(host=app.config['HOST'], debug=app.config['DEBUG'], port=app.config['PORT'])
 
 

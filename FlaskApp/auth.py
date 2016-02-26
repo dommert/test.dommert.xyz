@@ -1,9 +1,9 @@
 # Auth
 
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, jsonify
 from flask import render_template, flash
 from app import app, db
-from model import *
+from models import *
 from config import Configuration
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
@@ -58,16 +58,15 @@ def token(f):
     return decorated_function
 
 # Authenicate User
-def authenticate(self, username, password):
-        active = self.User.select().where(self.User.active==True)
+def authenticate(username, password):
+        active = User.select().where(User.active == True)
         try:
-            user = active.where(self.User.email==username).get()
-        except self.User.DoesNotExist:
+            user = active.where(User.email == username).get()
+        except User.DoesNotExist:
             return False
         else:
-            if not user.check_password(password):
+            if not check_password_hash(User.password, password):
                 return False
-
         return user
 
 
@@ -76,44 +75,36 @@ def authenticate(self, username, password):
 # Sign Up
 @app.route('/api/register', methods=['POST'])
 def register():
-    json_data = request.json
     # JSON Data
-    user = User(
-        email=json_data['email'],
-        password=json_data['password']
-    )
+    json_data = request.json
+
     try:
         # Add User
-        db.session.add(user)
-        db.session.commit()
-        #password = generate_password_hash(user.password)
-        status = 'success'
+        hashed_pass = generate_password_hash(json_data['password'])
+        user = User.create(
+            username=NULL,
+            password=hashed_pass,
+            email=json_data['username'],
+            created=datetime.datetime.now()
+        )
+        status = 'Success'
     except:
-        status = 'this user is already registered'
-    db.session.close()
-    return jsonify({'result': status})
+        status = 'This user is already registered!'
+
+    return jsonify({'message': status})
 
 # LOGIN
 @app.route('/api/login', methods=['POST'])
 def login():
     json_data = request.json
-    # Find Email
-    user = User.query.filter_by(email=json_data['email']).first()
-    if authenticate(self, json_data['username'], json_data['password']):
+      # Find Email
+    user = User.select().where(User.email==json_data['username']).get()
+    if authenticate(json_data['username'], json_data['password']):
         jtoken = create_token(user)
-        return {'token': jtoken}
-
+        status = True
     else:
         status = False
-    return jsonify({'result': status, "message": "Invalid username/password"})
+    return jsonify({'result': status, 'token': jtoken, 'user': json_data['username']})
 
 
 
-@app.route('/api/dummy-api/', methods=['GET'])
-@auth_token_required
-def dummyAPI():
-    ret_dict = {
-        "Key1": "Value1",
-        "Key2": "value2"
-    }
-    return jsonify(items=ret_dict)
