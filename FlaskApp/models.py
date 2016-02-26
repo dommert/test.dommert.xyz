@@ -2,17 +2,18 @@
 import datetime
 from peewee import *
 from app import db
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_chairy.utils import make_password, check_password
+
 
 
 # -----------------------------------------------------
 
 class BaseUser(object):
     def set_password(self, password):
-        self.password = generate_password_hash(password)
+        self.password = make_password(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password, password)
+        return check_password(self.password, password)
 
 # User Class
 class User(db.Model, BaseUser):

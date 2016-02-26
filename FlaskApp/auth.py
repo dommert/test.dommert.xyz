@@ -3,7 +3,7 @@
 from flask import Flask, request, redirect, jsonify
 from flask import render_template, flash
 from app import app, db
-from models import *
+from models import User
 from config import Configuration
 from flask_chairy.utils import make_password, check_password
 from functools import wraps
@@ -78,21 +78,26 @@ def authenticate(username, password):
 def register():
     # JSON Data
     json_data = request.json
+    username = json_data['username']
+    password = json_data['password']
 
+    hashed_pass = make_password(password)
+    user = User()
+    user.active = True
+    user.admin = False
+    user.email = username
+    user.password = hashed_pass
+    user.join_date = datetime.datetime.now()
     try:
         # Add User
-        hashed_pass = make_password(json_data['password'])
-        user = User.create(
-            username=NULL,
-            password=hashed_pass,
-            email=json_data['username'],
-            created=datetime.datetime.now()
-        )
-        status = 'Success'
+
+        user.save()
+        status = 'Success ' + username
+
     except:
         status = 'This user is already registered!'
-
-    return jsonify({'message': status})
+        status2 = username + password
+    return jsonify({'message': status, 'user':status2})
 
 # LOGIN
 @app.route('/api/login', methods=['POST'])
@@ -100,15 +105,16 @@ def login():
     json_data = request.json
     username = json_data['username']
     password = json_data['password']
+    status = []
       # Find Email
     user = User.select().where(User.email==username).get()
     if authenticate(username, password):
         jtoken = create_token(user)
-        status = True
+        status.status = True
         status.token = jtoken
     else:
-        status = False
-    return jsonify({'result': status, 'token': status.token})
+        status.status = False
+    return jsonify({'result': status.status, 'token': status.token})
 
 
 
