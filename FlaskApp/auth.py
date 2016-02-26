@@ -1,9 +1,10 @@
 # Auth
 
+import datetime
 from flask import Flask, request, redirect, jsonify
 from flask import render_template, flash
 from app import app, db
-from models import User
+from models import *
 from config import Configuration
 from flask_chairy.utils import make_password, check_password
 from functools import wraps
@@ -18,19 +19,19 @@ def create_token(user, expires = 20):
         # subject
         'sub': user.id,
         #issued at
-        'iat': datetime.utcnow(),
+        'iat': datetime.datetime.utcnow(),
         #expiry
-        'exp': datetime.utcnow() + timedelta(hours=expires)
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=expires)
     }
 
-    token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
+    token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
     return token.decode('unicode_escape')
 
 
 # Parse Token
 def parse_token(req):
     token = req.headers.get('Authorization').split()[1]
-    return jwt.decode(token, SECRET_KEY, algorithms='HS256')
+    return jwt.decode(token, app.config['SECRET_KEY'], algorithms='HS256')
 
 # @Token Wrapper
 def token(f):
@@ -61,13 +62,10 @@ def token(f):
 def authenticate(username, password):
         active = User.select().where(User.active == True)
         try:
-            user = active.where(User.email == username).get()
+            hashpassword = User.password
+            user = active.where((User.email == username) & (User.password == hashpassword)).get()
         except User.DoesNotExist:
             return False
-        else:
-            hpassword = User.password
-            if not check_password(password, hpassword):
-                return False
         return user
 
 
@@ -80,24 +78,17 @@ def register():
     json_data = request.json
     username = json_data['username']
     password = json_data['password']
-
     hashed_pass = make_password(password)
-    user = User()
-    user.active = True
-    user.admin = False
-    user.email = username
-    user.password = hashed_pass
-    user.join_date = datetime.datetime.now()
     try:
-        # Add User
-
+        user = User(username=False, email=username, admin=False, active=True, join_date=datetime.datetime.now())
+        user.set_password(password)
         user.save()
         status = 'Success ' + username
 
     except:
         status = 'This user is already registered!'
         status2 = username + password
-    return jsonify({'message': status, 'user':status2})
+    return jsonify({'message': status, 'user': status2})
 
 # LOGIN
 @app.route('/api/login', methods=['POST'])
