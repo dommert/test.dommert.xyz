@@ -5,7 +5,7 @@ from flask import render_template, flash
 from app import app, db
 from models import *
 from config import Configuration
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_chairy.utils import make_password, check_password
 from functools import wraps
 import jwt
 from jwt import DecodeError, ExpiredSignature
@@ -65,7 +65,8 @@ def authenticate(username, password):
         except User.DoesNotExist:
             return False
         else:
-            if not check_password_hash(User.password, password):
+            hpassword = User.password
+            if not check_password(password, hpassword):
                 return False
         return user
 
@@ -80,7 +81,7 @@ def register():
 
     try:
         # Add User
-        hashed_pass = generate_password_hash(json_data['password'])
+        hashed_pass = make_password(json_data['password'])
         user = User.create(
             username=NULL,
             password=hashed_pass,
@@ -97,14 +98,17 @@ def register():
 @app.route('/api/login', methods=['POST'])
 def login():
     json_data = request.json
+    username = json_data['username']
+    password = json_data['password']
       # Find Email
-    user = User.select().where(User.email==json_data['username']).get()
-    if authenticate(json_data['username'], json_data['password']):
+    user = User.select().where(User.email==username).get()
+    if authenticate(username, password):
         jtoken = create_token(user)
         status = True
+        status.token = jtoken
     else:
         status = False
-    return jsonify({'result': status, 'token': jtoken, 'user': json_data['username']})
+    return jsonify({'result': status, 'token': status.token})
 
 
 
