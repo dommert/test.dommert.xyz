@@ -38,13 +38,13 @@ def token(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not request.headers.get('Authorization'):
-            response = jsonify(message='Missing authorization header')
+            response = jsonify(message='Where art thou Token?')
             response.status_code = 401
             return response
         try:
             payload = parse_token(request)
         except DecodeError:
-            response = jsonify(message='Token is invalid =)')
+            response = jsonify(message='Token is invalid :<')
             response.status_code = 401
             return response
         except ExpiredSignature:
