@@ -96,11 +96,11 @@ def login():
     username = json_data['username']
     password = json_data['password']
       # -- Need to make option to login username/email
-    user = User.select().where(User.username==username).get()
+    user = User.select().where(User.username == username).get()
     if authenticate(username, password):
         jtoken = create_token(user)
         status = True
-        return jsonify(status= status, access_token= jtoken)
+        return jsonify(access_token=jtoken, status=status)
     else:
         status = False
         return jsonify(status= status, message="Login Error!")
