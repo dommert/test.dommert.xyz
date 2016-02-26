@@ -60,10 +60,10 @@ def token(f):
 
 # Authenicate User
 def authenticate(username, password):
-        active = User.select().where(User.active == True)
         try:
+
             hashpassword = User.password
-            user = active.where((User.email == username) & (User.password == hashpassword)).get()
+            user = User.where((User.active == True) & (User.email == username) & (User.password == hashpassword)).get()
         except User.DoesNotExist:
             return False
         return user
