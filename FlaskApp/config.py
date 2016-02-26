@@ -17,7 +17,7 @@ class Configuration(object):
     # Auth
     PASSWORD_SALT = "some0th3r Rad0m String!11"
     # JWT
-    TOKEN_SECRET = "S0m3Thing R4nd0m Str!ng1!"
+    TOKEN_KEY = "S0m3Thing R4nd0m Str!ng1!"
 
 # PeeWee Database
     DATABASE = {
