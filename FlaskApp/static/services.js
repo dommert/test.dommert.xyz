@@ -34,6 +34,8 @@ angular.module('myApp').factory('AuthService',
       .success(function (data, status) {
         if(status === 200 && data.status === true){
           user = true;
+          //$window.sessionStorage.accessToken = response.body.access_token;
+          localStorage['jwtToken'] =data.access_token;
           deferred.resolve();
         } else {
           user = false;
