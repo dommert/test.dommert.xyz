@@ -2,7 +2,7 @@
 
 import datetime
 from flask import Flask, request, redirect, jsonify
-from flask import render_template, flash
+from flask import render_template, flash, g
 from app import app, db
 from models import *
 from config import Configuration
@@ -12,9 +12,14 @@ import jwt
 from jwt import DecodeError, ExpiredSignature
 
 
-
 # Create Token
 def create_token(user, expires=20):
+    """
+
+    :param user:
+    :param expires:
+    :return:
+    """
     payload = {
         # subject
         'sub': user.id,
@@ -59,14 +64,17 @@ def token(f):
     return decorated_function
 
 # Authenicate User
-def authenticate(username, password):
-        try:
 
-            hashpassword = User.password
-            user = User.select().where((User.email == username) & (User.active == 1) & (User.password == hashpassword)).get()
-        except User.DoesNotExist:
-            return False
-        return user
+def authenticate(username, password):
+
+    try:
+        user = User.get((User.active == True) & (User.username == username))
+        if not user.check_password(password):
+             return False
+    except User.DoesNotExist:
+        return False
+    return user
+
 
 
 # ------ ROUTES -------- #

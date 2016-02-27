@@ -25,3 +25,7 @@ class Configuration(object):
         'engine': 'peewee.SqliteDatabase',
         'check_same_thread': False,
     }
+
+    # Without this get_auth_token via POST request w/ JSON data does not work
+    # You keep getting "CSRF token missing" error
+    WTF_CSRF_ENABLED = False
