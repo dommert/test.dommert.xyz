@@ -32,9 +32,9 @@ angular.module('myApp').factory('AuthService',
     $http.post('/api/login', {username: username, password: password})
       // handle success
       .success(function (data, status) {
-        if(status === 200 && data.result){
+        if(status === 200 && data.status === True){
           user = true;
-         //$window.sessionStorage.accessToken = response.body.access_token;
+          $window.sessionStorage.accessToken = response.body.access_token;
           deferred.resolve();
         } else {
           user = false;
