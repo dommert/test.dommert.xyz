@@ -88,7 +88,7 @@ def register():
     username = json_data['username']
     password = json_data['password']
     try:
-        user = User(username=username, admin=False, active=True, join_date=datetime.datetime.now())
+        user = User(username=username, active=True, join_date=datetime.datetime.now())
         user.set_password(password)
         user.save()
         status = True
@@ -109,7 +109,8 @@ def login():
         user = User.select().where(User.username == username).get()
         jtoken = create_token(user)
         status = True
-        return jsonify(access_token=jtoken, status=status)
+        userid = user.id
+        return jsonify(access_token=jtoken, status=status, userId=userid)
     else:
         status = False
         return jsonify(status=status, message="Authentication Error!!")

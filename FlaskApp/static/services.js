@@ -35,7 +35,8 @@ angular.module('myApp').factory('AuthService',
         if(status === 200 && data.status === true){
           user = true;
           //$window.sessionStorage.accessToken = response.body.access_token;
-          localStorage['jwtToken'] =data.access_token;
+          localStorage['jwtToken']=data.access_token;
+          localStorage['uid']=data.userId;
           deferred.resolve();
         } else {
           user = false;
@@ -57,7 +58,7 @@ angular.module('myApp').factory('AuthService',
 
     // create a new instance of deferred
     var deferred = $q.defer();
-
+    localStorage.removeItem('jwtToken');
     // send a get request to the server
     $http.get('/api/logout')
       // handle success
