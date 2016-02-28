@@ -58,7 +58,8 @@ angular.module('myApp').factory('AuthService',
 
     // create a new instance of deferred
     var deferred = $q.defer();
-    localStorage.removeItem('jwtToken');
+    localStorage.removeItem('token');
+    localStorage.removeItem('uid');
     // send a get request to the server
     $http.get('/api/logout')
       // handle success
