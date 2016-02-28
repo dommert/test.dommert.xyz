@@ -1,24 +1,27 @@
 # Auth
 # Dommert Inc
-
+'''
 import datetime
-from flask import Flask, request, redirect, jsonify
-from flask import render_template, flash, g
-from app import app, db
-from models import *
 from config import Configuration
 from flask_chairy.utils import make_password, check_password
+from flask import Flask, redirect, render_template, flash
+'''
+
+from flask import request, jsonify, g
+from app import app, db
+from models import *
+
 from functools import wraps
 import jwt
 from jwt import DecodeError, ExpiredSignature
 
 
 # Create Token
-def create_token(user, expires=20):
+def create_token(user, expires=24):
     """
 
     :param user:
-    :param expires:
+    :param expires: INT hours till token expires. default is 24
     :return:
     """
     payload = {
@@ -107,10 +110,9 @@ def login():
       # -- Need to make option to login username/email
     if authenticate(username, password):
         user = User.select().where(User.username == username).get()
-        jtoken = create_token(user)
+        jwtoken = create_token(user)
         status = True
-        userid = user.id
-        return jsonify(access_token=jtoken, status=status, userId=userid)
+        return jsonify(status=status, token=jwtoken, userId=user.id, user=user.email)
     else:
         status = False
         return jsonify(status=status, message="Authentication Error!!")
