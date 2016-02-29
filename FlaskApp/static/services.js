@@ -34,7 +34,7 @@ angular.module('myApp').factory('AuthService',
       .success(function (data, status) {
         if(status === 200 && data.status === true){
           user = true;
-          //$window.sessionStorage.accessToken = response.body.access_token;
+          # Store Token to LocalStorage
           localStorage['token']=data.token;
           localStorage['uid']=data.userId;
           deferred.resolve();
